@@ -211,7 +211,10 @@ func (api *BaseAPI) pendingBlock() *types.Block {
 
 func (api *BaseAPI) blockByRPCNumber(number rpc.BlockNumber, tx kv.Tx) (*types.Block, error) {
 	if number == rpc.PendingBlockNumber {
-		return api.pendingBlock(), nil
+		if block := api.pendingBlock(); block != nil {
+			return block, nil
+		}
+		number = rpc.LatestBlockNumber
 	}
 
 	n, err := getBlockNumber(number, tx)
